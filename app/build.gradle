@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.huxq17.plugins.example"
+        minSdkVersion 10
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+}
+//dependsOn 可根据实际需要增加或更改
+task makeJar(type: Jar) {
+    appendix = "demo"
+    baseName = "androidJar"
+    version = "1.0.1"
+    classifier = "debug"
+    //后缀名
+    extension = "jar"
+    //最终的 Jar 包名，如果没设置，默认为 [baseName]-[appendix]-[version]-[classifier].[extension]
+    archiveName = "patch.jar"
+    //需打包的资源所在的路径集
+    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/debug"];
+    //初始化资源路径集
+    from srcClassDir
+    //只导入资源路径集下的部分资源
+    include "com/huxq17/plugins/example/Util.class"
+    //注: exclude include 支持可变长参数
+}
+makeJar.dependsOn(build)
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+//    compile project(':library')
+}
