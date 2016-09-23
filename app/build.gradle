@@ -22,6 +22,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_6
     }
 }
+apply plugin: 'patch-gradle-plugin'
+patchPlugin {
+    enable = true//如果enable为true则表明打出的包会在每个类的构造函数中注入代码
+}
 //dependsOn 可根据实际需要增加或更改
 task makeJar(type: Jar) {
     appendix = "demo"
