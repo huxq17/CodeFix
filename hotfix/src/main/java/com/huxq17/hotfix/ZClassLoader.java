@@ -1,7 +1,5 @@
 package com.huxq17.hotfix;
 
-import com.andbase.tractor.utils.LogUtils;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -35,7 +33,7 @@ public class ZClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
-        LogUtils.i("loadClass "+className);
+//        LogUtils.i("loadClass "+className);
         //先查找补丁自己已经加载过的有没有
         Class<?> clazz = findLoadedClass(className);
         if (clazz == null) {

@@ -9,9 +9,13 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -21,6 +25,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 apply plugin: 'patch-gradle-plugin'
 patchPlugin {
@@ -44,7 +52,29 @@ task makeJar(type: Jar) {
     include "com/huxq17/plugins/example/Util.class", "com/huxq17/plugins/example/MainActivity.class"
     //注: exclude include 支持可变长参数
 }
+task buildDex(type: Exec) {
+    Properties properties = new Properties()
+    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(propertyFile.newDataInputStream())
+
+    String buildDirPath = project.buildDir.absolutePath
+    workingDir properties.getProperty('sdk.dir') + '/platform-tools'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch.dex ' + buildDirPath + '/libs/patch.jar'
+}
+
+task buildDexWithVersion(type: Exec) {
+    Properties properties = new Properties()
+    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(propertyFile.newDataInputStream())
+
+    String buildDirPath = project.buildDir.absolutePath
+    workingDir properties.getProperty('sdk.dir') + '/platform-tools'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch_'+VERSION_NAME+'.dex ' + buildDirPath + '/libs/patch.jar'
+}
+
 makeJar.dependsOn(build)
+buildDex.dependsOn(makeJar)
+buildDexWithVersion.dependsOn(makeJar)
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'

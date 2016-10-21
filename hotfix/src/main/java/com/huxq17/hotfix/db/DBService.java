@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.andbase.tractor.utils.LogUtils;
 import com.huxq17.hotfix.bean.DownloadInfo;
@@ -49,7 +48,7 @@ public class DBService {
     public synchronized List<DownloadInfo> getInfos(String urlstr) {
         List<DownloadInfo> list = new ArrayList<DownloadInfo>();
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String sql = "select thread_id,startposition,endposition,url from "+DOWNLOAD_TABLE+" where url=?";
+        String sql = "select thread_id,startposition,endposition,url from " + DOWNLOAD_TABLE + " where url=?";
         Cursor cursor = database.rawQuery(sql, new String[]{urlstr});
         while (cursor.moveToNext()) {
             DownloadInfo info = new DownloadInfo(cursor.getInt(0), cursor.getInt(1), cursor.getLong(2),
@@ -73,7 +72,7 @@ public class DBService {
         Object[] bindArgs = {threadId, startposition, endposition, url};
         database.execSQL(sql, bindArgs);
         database.close();
-        LogUtils.i("updataInfos total=" + totalCount + ";threadid=" + threadId + ";startposition=" + startposition + ";endposition=" + endposition);
+        LogUtils.d("updataInfos total=" + totalCount + ";threadid=" + threadId + ";startposition=" + startposition + ";endposition=" + endposition);
     }
 
     /**
@@ -87,10 +86,9 @@ public class DBService {
      * 下载完成后删除数据库中的数据
      */
     public synchronized void delete(String url) {
-        long totalCount = getCount(DOWNLOAD_TABLE);
+//        long totalCount = getCount(DOWNLOAD_TABLE);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        int count = database.delete(DOWNLOAD_TABLE, "url=?", new String[]{url});
-        Log.i("delete", "delete total=" + totalCount + ";delete count=" + count + ";url=" + url);
+        database.delete(DOWNLOAD_TABLE, "url=?", new String[]{url});
         database.close();
     }
 
@@ -104,15 +102,9 @@ public class DBService {
         return result;
     }
 
-    public void saveOrUpdateInfos() {
-
-    }
-
     public synchronized void deleteByIdAndUrl(int id, String url) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        int count = database.delete(DOWNLOAD_TABLE, "thread_id=? and url=?", new String[]{
-                id + "", url});
-        Log.i("delete", "delete id=" + id + "," + "count=" + count);
+        database.delete(DOWNLOAD_TABLE, "thread_id=? and url=?", new String[]{id + "", url});
         database.close();
     }
 }

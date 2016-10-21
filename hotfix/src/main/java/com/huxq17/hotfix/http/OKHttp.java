@@ -68,7 +68,7 @@ public class OKHttp implements HttpBase {
             mOkHttpClient.setCookieHandler(new CookieManager(null,
                     CookiePolicy.ACCEPT_ORIGINAL_SERVER));
             mOkHttpClient.setCookieHandler(new CookieManager(
-                    new PersistentCookieStore(context.getApplicationContext()), CookiePolicy.ACCEPT_ALL));
+                    new PersistentCookieStore(context), CookiePolicy.ACCEPT_ALL));
 //            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
 //            StrictMode.setThreadPolicy(policy);
         }

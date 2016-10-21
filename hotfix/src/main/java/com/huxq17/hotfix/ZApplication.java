@@ -21,7 +21,8 @@ public class ZApplication extends Application {
         super.attachBaseContext(base);
         mBaseClassLoader = this.getClassLoader();
         mPackageInfo = PluginUtil.getField(getBaseContext(), "mPackageInfo");
-        setClassLoader();
+//        setClassLoader();
+        HotFix.init(this);
     }
 
     private void setClassLoader() {

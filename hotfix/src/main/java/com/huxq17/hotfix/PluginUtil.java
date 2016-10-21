@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * 插件的工具类，用到的工具静态方法在这里，包括zip、file、路径配置等等
- * <p>
+ * <p/>
  * Created by huangjian on 2016/6/21.
  */
 public class PluginUtil {
@@ -211,7 +211,7 @@ public class PluginUtil {
     public static boolean delete(String filePathName) {
         if (TextUtils.isEmpty(filePathName)) return false;
         File file = new File(filePathName);
-        return file.isFile() && file.exists() && file.delete();
+        return deleteFile(file);
     }
 
     /**

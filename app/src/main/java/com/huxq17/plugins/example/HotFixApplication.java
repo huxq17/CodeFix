@@ -1,5 +1,6 @@
 package com.huxq17.plugins.example;
 
+import com.huxq17.hotfix.HotFix;
 import com.huxq17.hotfix.ZApplication;
 
 /**
@@ -7,4 +8,10 @@ import com.huxq17.hotfix.ZApplication;
  * dx  --dex --output dex.jar patch.jar
  */
 public class HotFixApplication extends ZApplication {
+    private static String PATCH_URL = "http://192.168.22.51:8080/test/patch.jar";
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        HotFix.downloadPatch(PATCH_URL);
+    }
 }

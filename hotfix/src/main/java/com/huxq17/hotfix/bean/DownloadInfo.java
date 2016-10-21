@@ -16,6 +16,8 @@ public class DownloadInfo {
     public String filePath;//文件保存路径
     public String fileDir;//保存文件的文件夹路径
     public String filename;//保存的文件名
+    public String tempFileName;
+    public String tempFilePath;
     public int threadNum;
     private int process;
 
@@ -25,6 +27,8 @@ public class DownloadInfo {
         this.filename = filename;
         this.filePath = this.fileDir + this.filename;
         this.threadNum = threadNum;
+        this.tempFileName = filename + ".temp";
+        this.tempFilePath = this.fileDir + this.tempFileName;
     }
 
     public DownloadInfo(int downloadId,
@@ -41,12 +45,12 @@ public class DownloadInfo {
      * @param done
      */
     public boolean compute(Task task, long done) {
+//        LogUtils.d("completeSize=" + completeSize + ";done=" + done+";task.isRunning="+task.isRunning());
         if (task == null || !task.isRunning()) {
             //当下载任务不在运行时，返回false，主要用于其他下载子线程停止下载动作
             return false;
         }
         completeSize += done;
-//        LogUtils.d("completeSize=" + completeSize + ";done=" + done);
         int process = (int) (100 * (1.0f * completeSize / fileLength));
         if (process != this.process) {
             this.process = process;

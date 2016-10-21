@@ -5,14 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.andbase.tractor.utils.LogUtils;
 
+public class MainActivity extends AppCompatActivity {
+    private static String PATCH_URL = "http://192.168.22.51:8080/test/patch.jar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LogUtils.e("test classloader "+getClassLoader());
+        LogUtils.e("test classloader " + getClassLoader());
+//        HotFix.downloadPatch(PATCH_URL);
     }
 
     public void click(View view) {
@@ -45,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
 //            exception.printStackTrace();
 //        }
         } else {
-           toast("bug已经解决");
+            toast("bug已经解决");
         }
     }
-    private void toast(String msg){
-        Toast.makeText(this,"bug",Toast.LENGTH_SHORT).show();
+
+    private void toast(String msg) {
+        Toast.makeText(this, "bug", Toast.LENGTH_SHORT).show();
     }
 }
