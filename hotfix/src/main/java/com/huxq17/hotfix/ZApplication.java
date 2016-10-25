@@ -3,10 +3,6 @@ package com.huxq17.hotfix;
 import android.app.Application;
 import android.content.Context;
 
-import com.andbase.tractor.utils.LogUtils;
-
-import java.io.File;
-
 /**
  * Created by huxq17 on 2016/9/12.
  * dx  --dex --output dex.jar patch.jar
@@ -25,18 +21,18 @@ public class ZApplication extends Application {
         HotFix.init(this);
     }
 
-    private void setClassLoader() {
+//    private void setClassLoader() {
 //        Util.downloadfromAssets(this, "patch.jar");
-        File patchFile = new File(this.getFilesDir(), "patch.jar");
-        File patchdealFile = new File(this.getFilesDir(), "patch_deal");
-        ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(),patchFile.getAbsolutePath(),patchdealFile.getAbsolutePath());
-        classLoader.setOrgAPKClassLoader(mBaseClassLoader);
-        LogUtils.i("test mBaseClassLoader.getParent().getClass().getSimpleName() ="+mBaseClassLoader.getParent().getClass().getSimpleName());
-        PluginUtil.setField(mBaseClassLoader, "parent", classLoader);
+//        File patchFile = new File(this.getFilesDir(), "patch.jar");
+//        File patchdealFile = new File(this.getFilesDir(), "patch_deal");
+//        ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(),patchFile.getAbsolutePath(),patchdealFile.getAbsolutePath());
+//        classLoader.setOrgAPKClassLoader(mBaseClassLoader);
+//        LogUtils.i("test mBaseClassLoader.getParent().getClass().getSimpleName() ="+mBaseClassLoader.getParent().getClass().getSimpleName());
+//        PluginUtil.setField(mBaseClassLoader, "parent", classLoader);
 //        PluginUtil.setField(mPackageInfo, "mClassLoader", classLoader);
 //        Thread.currentThread().setContextClassLoader(classLoader);
-        mNowClassLoader = classLoader;
-    }
+//        mNowClassLoader = classLoader;
+//    }
     public String getDexOutPath(){
         return getFilesDir().getPath()+"/patchs/";
     }

@@ -29,7 +29,7 @@ public class HotFix {
     public static String PATCH_DIR;
     private static final String OPTIMIZED_DEX_DIR_SUF = "/optimized_dex_dir/";
     private static String PATCH_VERSION;
-    private static final String OPTIMIZED_PREFIX = "optimized_";
+    protected static final String OPTIMIZED_PREFIX = "optimized_";
     private static String OPTIMIZED_DEX_DIR;
     private static Context mContext;
     public static volatile ClassLoader mNowClassLoader = null;          //正在使用的ClassLoader
@@ -58,14 +58,22 @@ public class HotFix {
      */
     private static void install() {
         File patchDir = new File(PATCH_DIR);
+        File optimizedDexDir = new File(OPTIMIZED_DEX_DIR);
         File[] files = patchDir.listFiles();
         if (files.length > 0) {
-            String patchFileName = files[0].getName();
-            ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(), files[0].getAbsolutePath(), OPTIMIZED_DEX_DIR + OPTIMIZED_PREFIX + patchFileName);
+//            String patchFileName = files[0].getName();
+//            ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(), files[0].getAbsolutePath(), OPTIMIZED_DEX_DIR + OPTIMIZED_PREFIX + patchFileName);
+            ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(), patchDir, optimizedDexDir);
             classLoader.setOrgAPKClassLoader(mBaseClassLoader);
             LogUtils.d("test mBaseClassLoader.getParent().getClass().getSimpleName() =" + mBaseClassLoader.getParent().getClass().getSimpleName());
             PluginUtil.setField(mBaseClassLoader, "parent", classLoader);
         }
+    }
+
+    public static boolean hasPatch() {
+        File patchDir = new File(PATCH_DIR);
+        File[] files = patchDir.listFiles();
+        return files.length > 0 ? true : false;
     }
 
     public static void downloadPatch(String patchUrl) {

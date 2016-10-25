@@ -21,7 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
+    compileOptions {//这里的代码块不是必须的，但是如果用现在的dx，则是必须的
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
     }
@@ -34,47 +34,7 @@ apply plugin: 'patch-gradle-plugin'
 patchPlugin {
     enable = true//如果enable为true则表明打出的包会在每个类的构造函数中注入代码
 }
-//dependsOn 可根据实际需要增加或更改
-task makeJar(type: Jar) {
-    appendix = "demo"
-    baseName = "androidJar"
-    version = "1.0.1"
-    classifier = "debug"
-    //后缀名
-    extension = "jar"
-    //最终的 Jar 包名，如果没设置，默认为 [baseName]-[appendix]-[version]-[classifier].[extension]
-    archiveName = "patch.jar"
-    //需打包的资源所在的路径集
-    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/debug"];
-    //初始化资源路径集
-    from srcClassDir
-    //只导入资源路径集下的部分资源
-    include "com/huxq17/plugins/example/Util.class", "com/huxq17/plugins/example/MainActivity.class"
-    //注: exclude include 支持可变长参数
-}
-task buildDex(type: Exec) {
-    Properties properties = new Properties()
-    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
-    properties.load(propertyFile.newDataInputStream())
 
-    String buildDirPath = project.buildDir.absolutePath
-    workingDir properties.getProperty('sdk.dir') + '/platform-tools'
-    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch.dex ' + buildDirPath + '/libs/patch.jar'
-}
-
-task buildDexWithVersion(type: Exec) {
-    Properties properties = new Properties()
-    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
-    properties.load(propertyFile.newDataInputStream())
-
-    String buildDirPath = project.buildDir.absolutePath
-    workingDir properties.getProperty('sdk.dir') + '/platform-tools'
-    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch_'+VERSION_NAME+'.dex ' + buildDirPath + '/libs/patch.jar'
-}
-
-makeJar.dependsOn(build)
-buildDex.dependsOn(makeJar)
-buildDexWithVersion.dependsOn(makeJar)
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
@@ -82,3 +42,5 @@ dependencies {
 //    compile project(':library')
     compile project(':hotfix')
 }
+
+apply from: 'hotfix.gradle'

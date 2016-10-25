@@ -1,5 +1,8 @@
 package com.huxq17.hotfix;
 
+import com.andbase.tractor.utils.LogUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -9,21 +12,30 @@ public class ZClassLoader extends ClassLoader {
     private Method findClassMethod = null;
     private Method findLoadedClassMethod = null;
     private ClassLoader mChild = null;
-    private String mDexOutputPath;
-    private String mDexPath;
-    private DexFile mDexFile;
+    private File mDexOutputPath;
+    private File mDexPath;
+    private DexFile[] mDexFile;
 
-    public ZClassLoader(ClassLoader parent, String dexPath, String dexOutPath) {
+    public ZClassLoader(ClassLoader parent, File dexPath, File dexOutPath) {
         super(parent);
         mDexPath = dexPath;
         mDexOutputPath = dexOutPath;
-        try {
-            mDexFile = DexFile.loadDex(mDexPath, mDexOutputPath, 0);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!mDexPath.isDirectory() || !mDexOutputPath.isDirectory()) {
+            LogUtils.e("Both mDexPath and mDexOutputPath are not a directory");
+            return;
+        }
+        File[] files = mDexPath.listFiles();
+        mDexFile = new DexFile[files.length];
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            File optimizedDex = new File(mDexOutputPath, HotFix.OPTIMIZED_PREFIX + file.getName());
+            try {
+                mDexFile[i] = DexFile.loadDex(file.getAbsolutePath(), optimizedDex.getAbsolutePath(), 0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 
     protected void setOrgAPKClassLoader(ClassLoader child) {
         mChild = child;
@@ -34,7 +46,7 @@ public class ZClassLoader extends ClassLoader {
     @Override
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
 //        LogUtils.i("loadClass "+className);
-        //先查找补丁自己已经加载过的有没有
+        //先查找已经加载过的有没有
         Class<?> clazz = findLoadedClass(className);
         if (clazz == null) {
             try {
@@ -77,8 +89,12 @@ public class ZClassLoader extends ClassLoader {
     protected Class<?> findClass(String className) throws ClassNotFoundException {
         if (mDexFile != null) {
             String slashName = className.replace('.', '/');
-            Class clazz = mDexFile.loadClass(slashName, this);
-            return clazz;
+            for (int i = 0; i < mDexFile.length; i++) {
+                Class clazz = mDexFile[i].loadClass(slashName, this);
+                if (clazz != null) {
+                    return clazz;
+                }
+            }
         }
         return super.findClass(className);
     }

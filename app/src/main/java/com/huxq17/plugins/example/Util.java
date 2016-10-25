@@ -8,6 +8,7 @@ public class Util {
 //        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        context.startActivity(intent);
-        Toast.makeText(context, "有bug，快处理", Toast.LENGTH_SHORT).show();
+//        android.os.Process.killProcess(android.os.Process.myPid());
+        Toast.makeText(context,"有bug需要处理",Toast.LENGTH_SHORT).show();
     }
 }

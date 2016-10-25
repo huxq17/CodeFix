@@ -1,0 +1,41 @@
+task makeJar(type: Jar) {
+    appendix = "demo"
+    baseName = "androidJar"
+    version = "1.0.1"
+    classifier = "debug"
+    //后缀名
+    extension = "jar"
+    //最终的 Jar 包名，如果没设置，默认为 [baseName]-[appendix]-[version]-[classifier].[extension]
+    archiveName = "patch.jar"
+    //需打包的资源所在的路径集
+    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/debug"];
+    //初始化资源路径集
+    from srcClassDir
+    //只导入资源路径集下的部分资源
+    include "com/huxq17/plugins/example/Util.class", "com/huxq17/plugins/example/MainActivity.class"
+    //注: exclude include 支持可变长参数
+}
+task buildDex(type: Exec) {
+    String buildDirPath = project.buildDir.absolutePath
+    workingDir getSdkDir() + '/platform-tools'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch.dex ' + buildDirPath + '/libs/patch.jar'
+}
+
+task buildDexWithVersion(type: Exec) {
+    String buildDirPath = project.buildDir.absolutePath
+    workingDir getSdkDir() + '/platform-tools'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch_' + VERSION_NAME + '.dex ' + buildDirPath + '/libs/patch.jar'
+}
+
+String getSdkDir() {
+    Properties properties = new Properties()
+    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(propertyFile.newDataInputStream())
+    return properties.getProperty('sdk.dir');
+}
+
+makeJar.dependsOn(build)
+buildDex.dependsOn(makeJar)
+buildDexWithVersion.dependsOn(makeJar)
+//makeJar.mustRunAfter build
+//buildDex.mustRunAfter makeJar
