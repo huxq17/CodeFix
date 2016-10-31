@@ -21,7 +21,7 @@ public class ZClassLoader extends ClassLoader {
         mDexPath = dexPath;
         mDexOutputPath = dexOutPath;
         if (!mDexPath.isDirectory() || !mDexOutputPath.isDirectory()) {
-            LogUtils.e("Both mDexPath and mDexOutputPath are not a directory");
+            LogUtils.e("Either mDexPath or mDexOutputPath is not a directory");
             return;
         }
         File[] files = mDexPath.listFiles();
@@ -35,6 +35,7 @@ public class ZClassLoader extends ClassLoader {
                 e.printStackTrace();
             }
         }
+
     }
 
     protected void setOrgAPKClassLoader(ClassLoader child) {
@@ -45,7 +46,6 @@ public class ZClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
-//        LogUtils.i("loadClass "+className);
         //先查找已经加载过的有没有
         Class<?> clazz = findLoadedClass(className);
         if (clazz == null) {
@@ -90,9 +90,12 @@ public class ZClassLoader extends ClassLoader {
         if (mDexFile != null) {
             String slashName = className.replace('.', '/');
             for (int i = 0; i < mDexFile.length; i++) {
-                Class clazz = mDexFile[i].loadClass(slashName, this);
-                if (clazz != null) {
-                    return clazz;
+                DexFile dexFile = mDexFile[i];
+                if (dexFile != null) {
+                    Class clazz = dexFile.loadClass(slashName, this);
+                    if (clazz != null) {
+                        return clazz;
+                    }
                 }
             }
         }

@@ -34,14 +34,18 @@ public class HotFix {
     private static Context mContext;
     public static volatile ClassLoader mNowClassLoader = null;          //正在使用的ClassLoader
     public static volatile ClassLoader mBaseClassLoader = null;         //系统原始的ClassLoader
+    private static Object mPackageInfo = null;
 
 
     public static void init(Application application) {
         mBaseClassLoader = application.getClassLoader();
+        LogUtils.e("test mBaseClassLoader=" + mBaseClassLoader);
         mContext = application.getBaseContext();
+        mPackageInfo = PluginUtil.getField(mContext, "mPackageInfo");
         OKHttp.init(mContext);
         createDir();
         install();
+        changeTopClassLoader();
     }
 
     private static void createDir() {
@@ -60,20 +64,31 @@ public class HotFix {
         File patchDir = new File(PATCH_DIR);
         File optimizedDexDir = new File(OPTIMIZED_DEX_DIR);
         File[] files = patchDir.listFiles();
-        if (files.length > 0) {
+        if (files != null && files.length > 0) {
 //            String patchFileName = files[0].getName();
 //            ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(), files[0].getAbsolutePath(), OPTIMIZED_DEX_DIR + OPTIMIZED_PREFIX + patchFileName);
             ZClassLoader classLoader = new ZClassLoader(mBaseClassLoader.getParent(), patchDir, optimizedDexDir);
             classLoader.setOrgAPKClassLoader(mBaseClassLoader);
-            LogUtils.d("test mBaseClassLoader.getParent().getClass().getSimpleName() =" + mBaseClassLoader.getParent().getClass().getSimpleName());
             PluginUtil.setField(mBaseClassLoader, "parent", classLoader);
         }
+    }
+
+    private static void changeTopClassLoader() {
+        ClassLoader TopLoader = ClassLoader.getSystemClassLoader();
+        String classPath = System.getProperty("java.class.path", ".");
+        LogUtils.d("test mBaseClassLoader.getParent().getClass().getSimpleName() =" + mBaseClassLoader.getParent().getClass().getSimpleName()+";classPath="+classPath);
+        Object bootstrapClassLoader =  PluginUtil.getField(TopLoader,"parent");
+        MyPathClassLoader pathClassLoader = new MyPathClassLoader(classPath, (ClassLoader) bootstrapClassLoader);
+        pathClassLoader.setChild(TopLoader);
+        PluginUtil.setField(TopLoader, "parent", pathClassLoader);
+        LogUtils.e("bootstrapClassLoader="+bootstrapClassLoader+";"+PluginUtil.getField(ClassLoader.getSystemClassLoader(),"parent"));
+
     }
 
     public static boolean hasPatch() {
         File patchDir = new File(PATCH_DIR);
         File[] files = patchDir.listFiles();
-        return files.length > 0 ? true : false;
+        return files != null && files.length > 0 ? true : false;
     }
 
     public static void downloadPatch(String patchUrl) {

@@ -12,19 +12,25 @@ task makeJar(type: Jar) {
     //初始化资源路径集
     from srcClassDir
     //只导入资源路径集下的部分资源
-    include "com/huxq17/plugins/example/Util.class", "com/huxq17/plugins/example/MainActivity.class"
+    include "com/huxq17/plugins/example/Util.class"
     //注: exclude include 支持可变长参数
 }
 task buildDex(type: Exec) {
     String buildDirPath = project.buildDir.absolutePath
     workingDir getSdkDir() + '/platform-tools'
-    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch.dex ' + buildDirPath + '/libs/patch.jar'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/export_patch.jar ' + buildDirPath + '/libs/patch.jar'
+    doLast {
+        delete buildDirPath + "/libs/patch.jar"
+    }
 }
 
 task buildDexWithVersion(type: Exec) {
     String buildDirPath = project.buildDir.absolutePath
     workingDir getSdkDir() + '/platform-tools'
-    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/patch_' + VERSION_NAME + '.dex ' + buildDirPath + '/libs/patch.jar'
+    commandLine 'cmd', '/c', 'dx  --dex --output ' + buildDirPath + '/libs/export_patch_' + VERSION_NAME + '.jar ' + buildDirPath + '/libs/patch.jar'
+    doLast {
+        delete buildDirPath + "/libs/patch.jar"
+    }
 }
 
 String getSdkDir() {
@@ -34,6 +40,12 @@ String getSdkDir() {
     return properties.getProperty('sdk.dir');
 }
 
+tasks.findByName('assembleDebug').doLast {
+    println('execute buildDex')
+//    build.execute()
+//    makeJar.excute()
+//    buildDex.execute()
+}
 makeJar.dependsOn(build)
 buildDex.dependsOn(makeJar)
 buildDexWithVersion.dependsOn(makeJar)

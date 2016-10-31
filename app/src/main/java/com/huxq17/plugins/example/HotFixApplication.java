@@ -1,6 +1,7 @@
 package com.huxq17.plugins.example;
 
-import com.andbase.tractor.utils.LogUtils;
+import android.content.Context;
+
 import com.huxq17.hotfix.ZApplication;
 
 /**
@@ -8,10 +9,13 @@ import com.huxq17.hotfix.ZApplication;
  * dx  --dex --output dex.jar patch.jar
  */
 public class HotFixApplication extends ZApplication {
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {
-        LogUtils.e("HotFixApplication onCreate");
         super.onCreate();
     }
 }
