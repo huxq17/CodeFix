@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep interface com.android.internal.util.** {*;}
+
+-keepattributes *Annotation*
+-keep class zeus.plugin.** { *;}
+-keep interface com.android.internal.util.** {*;}
+-keepattributes *Annotation*

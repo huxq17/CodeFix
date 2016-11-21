@@ -11,9 +11,8 @@ task makeJar(type: Jar) {
     def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/debug"];
     //初始化资源路径集
     from srcClassDir
-    //只导入资源路径集下的部分资源
-    include "com/huxq17/plugins/example/Util.class"
-    //注: exclude include 支持可变长参数
+    //根据需要include,只要生成有错误的那个或多个class文件就行，加上这个主要是可以减小补丁包的体积，如果省事可以注释并无视。
+//    include "com/huxq17/plugins/example/Util.class","第二个有问题的类.class"
 }
 task buildDex(type: Exec) {
     String buildDirPath = project.buildDir.absolutePath
@@ -39,12 +38,14 @@ String getSdkDir() {
     properties.load(propertyFile.newDataInputStream())
     return properties.getProperty('sdk.dir');
 }
-
-tasks.findByName('assembleDebug').doLast {
-    println('execute buildDex')
-//    build.execute()
-//    makeJar.excute()
-//    buildDex.execute()
+task buildDexwhileCompile(type: Exec) {
+//    String buildDirPath = project.buildDir.absolutePath
+    workingDir rootDir.getAbsolutePath()
+    println("rootDir.getAbsolutePath()="+rootDir.getAbsolutePath())
+    commandLine 'cmd', '/c','.\\gradlew buildDex'
+}
+tasks.findByName('build').doLast {
+//    buildDexwhileCompile.execute()
 }
 makeJar.dependsOn(build)
 buildDex.dependsOn(makeJar)

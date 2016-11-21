@@ -16,7 +16,7 @@ import java.io.File;
 /**
  * Created by huxq17 on 2016/10/19.
  */
-public class HotFix {
+public class CodeFix {
     public static final String PATCH_DIR_SUF = "/patch/";
     public static final String DOWNLOAD_PATCH_DIR_SUF = "/download_patch/";
     /**
@@ -100,12 +100,13 @@ public class HotFix {
             public void onSuccess(Object result) {
                 super.onSuccess(result);
                 PluginUtil.rename(DOWNLOAD_PATCH_DIR + filename, PATCH_DIR + filename);
+
             }
 
             @Override
             public void onFail(Object result) {
                 super.onFail(result);
             }
-        }, HotFix.class);
+        }, CodeFix.class);
     }
 }

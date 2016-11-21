@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.andbase.tractor.utils.LogUtils;
-import com.huxq17.hotfix.HotFix;
+import com.huxq17.hotfix.CodeFix;
 
 public class MainActivity extends AppCompatActivity {
     private static String PATCH_URL = "http://192.168.22.51:8080/test/export_patch.jar";
@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LogUtils.e("test MainActivity onCreate classloader=" + getClassLoader()+";ClassLoader.getSystemClassLoader()="+ClassLoader.getSystemClassLoader());
-        if (!HotFix.hasPatch()) {
-            HotFix.downloadPatch(PATCH_URL);
+        if (!CodeFix.hasPatch()) {
+            CodeFix.downloadPatch(PATCH_URL);
         }
     }
 

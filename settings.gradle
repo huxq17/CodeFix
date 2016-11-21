@@ -1,1 +1,1 @@
-include ':app', ':okhttp', ':hotfix'
+include ':app', ':okhttp', ':codefix'

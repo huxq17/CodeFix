@@ -28,7 +28,7 @@ public class ZClassLoader extends ClassLoader {
         mDexFile = new DexFile[files.length];
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            File optimizedDex = new File(mDexOutputPath, HotFix.OPTIMIZED_PREFIX + file.getName());
+            File optimizedDex = new File(mDexOutputPath, CodeFix.OPTIMIZED_PREFIX + file.getName());
             try {
                 mDexFile[i] = DexFile.loadDex(file.getAbsolutePath(), optimizedDex.getAbsolutePath(), 0);
             } catch (IOException e) {
