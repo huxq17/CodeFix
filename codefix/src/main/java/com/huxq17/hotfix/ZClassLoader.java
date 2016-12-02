@@ -28,14 +28,16 @@ public class ZClassLoader extends ClassLoader {
         mDexFile = new DexFile[files.length];
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            File optimizedDex = new File(mDexOutputPath, CodeFix.OPTIMIZED_PREFIX + file.getName());
-            try {
-                mDexFile[i] = DexFile.loadDex(file.getAbsolutePath(), optimizedDex.getAbsolutePath(), 0);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!file.getName().endsWith(CodeFix.PATCH_INFO)) {
+                File optimizedDex = new File(mDexOutputPath, CodeFix.OPTIMIZED_PREFIX + file.getName());
+                try {
+                    LogUtils.e("file.getAbsolutePath()=" + file.getAbsolutePath());
+                    mDexFile[i] = DexFile.loadDex(file.getAbsolutePath(), optimizedDex.getAbsolutePath(), 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     protected void setOrgAPKClassLoader(ClassLoader child) {

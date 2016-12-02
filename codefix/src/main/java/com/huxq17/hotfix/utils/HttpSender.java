@@ -71,6 +71,16 @@ public class HttpSender {
         mHttpBase.get(builder.build(), listener, tag);
     }
 
+    public void get(String url, LinkedHashMap<String, String> headers, LinkedHashMap<String, Object> params,
+                    final LoadListener listener, Object... tag) {
+        HttpRequest.Builder builder = new HttpRequest.Builder();
+        builder.url(url);
+        addHeaders(builder, headers);
+        builder.setParams(params);
+        builder.setResponseType(ResponseType.String);
+        mHttpBase.get(builder.build(), listener, tag);
+    }
+
     public HttpResponse getInputStreamSync(String url, LinkedHashMap<String, String> headers, String params, Object... tag) {
         if (!TextUtils.isEmpty(params)) {
             url = url + "?" + params;
@@ -100,12 +110,12 @@ public class HttpSender {
         return response;
     }
 
-    public void upload(String url, LinkedHashMap<String, String> headers, LinkedHashMap<String,File> files, LinkedHashMap<String, Object> params, LoadListener listener, Object tag) {
+    public void upload(String url, LinkedHashMap<String, String> headers, LinkedHashMap<String, File> files, LinkedHashMap<String, Object> params, LoadListener listener, Object tag) {
         HttpRequest.Builder builder = new HttpRequest.Builder();
         builder.url(url).setParams(params);
         addHeaders(builder, headers);
-        for (LinkedHashMap.Entry<String,File> set : files.entrySet()) {
-            builder.addFile(set.getKey(),set.getValue());
+        for (LinkedHashMap.Entry<String, File> set : files.entrySet()) {
+            builder.addFile(set.getKey(), set.getValue());
         }
         mHttpBase.post(builder.build(), listener, tag);
     }

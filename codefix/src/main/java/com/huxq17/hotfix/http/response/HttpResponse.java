@@ -54,6 +54,13 @@ public class HttpResponse implements Serializable {
         this.string = string;
     }
 
+    public static String getString(Object result) {
+        if (result instanceof HttpResponse) {
+            return ((HttpResponse) result).string();
+        }
+        return null;
+    }
+
     public String string() {
         check(ResponseType.String);
         return string;

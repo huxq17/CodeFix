@@ -2,7 +2,6 @@ package com.huxq17.hotfix.http.request;
 
 import android.text.TextUtils;
 
-import com.andbase.tractor.utils.LogUtils;
 import com.huxq17.hotfix.http.body.FileBody;
 
 import java.io.File;
@@ -133,7 +132,6 @@ public class RequestParams {
             }
             sb.append(set.getKey()).append("=").append(set.getValue());
         }
-        LogUtils.d("http params=" + sb.toString());
         return sb.toString();
     }
 }

@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +43,43 @@ public class PluginUtil {
         }
     }
 
+    public static void write2File(String version, File deviceFile) {
+        FileOutputStream fos = null;
+        try {
+            if (!deviceFile.exists()) {
+                deviceFile.createNewFile();
+            }
+            fos = new FileOutputStream(deviceFile);
+            fos.write(version.getBytes("UTF-8"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(fos);
+        }
+    }
+
+    public static String readFromFile(File deviceFile) {
+        char[] buffer = new char[2048];
+        int length = -1;
+        StringBuilder stringBuilder = new StringBuilder();
+        FileInputStream inputStream = null;
+        InputStreamReader reader = null;
+        try {
+            inputStream = new FileInputStream(deviceFile);
+            reader = new InputStreamReader(inputStream);
+            while ((length = reader.read(buffer)) != -1) {
+                stringBuilder.append(buffer, 0, length);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(reader);
+            close(inputStream);
+        }
+        return stringBuilder.toString();
+    }
 
     //start========================获取cpu类型的方法========================start
 

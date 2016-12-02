@@ -9,6 +9,7 @@ import com.huxq17.hotfix.ZApplication;
  * dx  --dex --output dex.jar patch.jar
  */
 public class HotFixApplication extends ZApplication {
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -18,4 +19,5 @@ public class HotFixApplication extends ZApplication {
     public void onCreate() {
         super.onCreate();
     }
+
 }
